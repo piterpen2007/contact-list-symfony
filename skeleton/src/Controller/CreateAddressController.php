@@ -3,7 +3,6 @@
 namespace EfTech\ContactList\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
-use EfTech\ContactList\Entity\Recipient;
 use EfTech\ContactList\Service\ArrivalAddressService;
 use EfTech\ContactList\Service\ArrivalNewAddressService\NewAddressDto;
 use EfTech\ContactList\Service\ArrivalNewAddressService\ResultRegisterNewAddressDto;
@@ -93,7 +92,7 @@ class CreateAddressController extends AbstractController
     {
         $jsonDataIdRecipient = array_values(
             array_map(
-                static function (Recipient $recipient) {
+                static function ($recipient) {
                     return $recipient->getIdRecipient();
                 },
                 $responseDto->getIdRecipient()

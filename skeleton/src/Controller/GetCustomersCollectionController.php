@@ -3,7 +3,6 @@
 namespace EfTech\ContactList\Controller;
 
 use EfTech\ContactList\Entity\Customer;
-use EfTech\ContactList\ValueObject\Email;
 use Psr\Log\LoggerInterface;
 use EfTech\ContactList\Service\SearchCustomersService\CustomerDto;
 use EfTech\ContactList\Service\SearchCustomersService\SearchCustomersCriteria;
@@ -192,7 +191,7 @@ class GetCustomersCollectionController extends AbstractController
         ];
 
         $jsonData['emails'] = array_values(
-            array_map(static function (Email $email) {
+            array_map(static function ($email) {
                 return [
                     'email' => $email->getEmail(),
                     'type_email' => $email->getTypeEmail(),

@@ -6,7 +6,6 @@ use EfTech\ContactList\Service\SearchKinsfolkService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 use EfTech\ContactList\Service\SearchKinsfolkService\KinsfolkDto;
-use EfTech\ContactList\ValueObject\Email;
 use Psr\Log\LoggerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -183,7 +182,7 @@ class GetKinsfolkCollectionController extends AbstractController
             'hotkey' => $kinsfolkDto->getHotkey(),
         ];
         $jsonData['emails'] = array_values(
-            array_map(static function (Email $email) {
+            array_map(static function ($email) {
                 return [
                     'email' => $email->getEmail(),
                     'type_email' => $email->getTypeEmail(),

@@ -6,7 +6,6 @@ namespace EfTech\ContactList\Controller;
 use EfTech\ContactList\Service\SearchColleagueService;
 use EfTech\ContactList\Service\SearchColleagueService\ColleagueDto;
 use EfTech\ContactList\Service\SearchColleagueService\SearchColleagueCriteria;
-use EfTech\ContactList\ValueObject\Email;
 use Psr\Log\LoggerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -179,7 +178,7 @@ class GetColleaguesCollectionController extends AbstractController
             'room_number' => $colleagueDto->getRoomNumber()
         ];
         $jsonData['emails'] = array_values(
-            array_map(static function (Email $email) {
+            array_map(static function ($email) {
                 return [
                     'email' => $email->getEmail(),
                     'type_email' => $email->getTypeEmail(),
