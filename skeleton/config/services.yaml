@@ -13,12 +13,46 @@ services:
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-    App\:
+    EfTech\ContactList\:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    EfTech\ContactList\Entity\RecipientRepositoryInterface:
+        factory: [ '@Doctrine\ORM\EntityManagerInterface', 'getRepository' ]
+        arguments:
+            $entityName: EfTech\ContactList\Entity\Recipient
+    EfTech\ContactList\Entity\CustomerRepositoryInterface:
+        factory: [ '@Doctrine\ORM\EntityManagerInterface', 'getRepository' ]
+        arguments:
+            $entityName: EfTech\ContactList\Entity\Customer
+    EfTech\ContactList\Entity\ColleagueRepositoryInterface:
+        factory: [ '@Doctrine\ORM\EntityManagerInterface', 'getRepository' ]
+        arguments:
+            $entityName: EfTech\ContactList\Entity\Colleague
+    EfTech\ContactList\Entity\KinsfolkRepositoryInterface:
+        factory: [ '@Doctrine\ORM\EntityManagerInterface', 'getRepository' ]
+        arguments:
+            $entityName: EfTech\ContactList\Entity\Kinsfolk
+    EfTech\ContactList\Entity\ContactListRepositoryInterface:
+        factory: [ '@Doctrine\ORM\EntityManagerInterface', 'getRepository' ]
+        arguments:
+            $entityName: EfTech\ContactList\Entity\ContactList
+    EfTech\ContactList\Entity\AddressRepositoryInterface:
+        factory: [ '@Doctrine\ORM\EntityManagerInterface', 'getRepository' ]
+        arguments:
+            $entityName: EfTech\ContactList\Entity\Address
+    EfTech\ContactList\Entity\UserRepositoryInterface:
+        factory: [ '@Doctrine\ORM\EntityManagerInterface', 'getRepository' ]
+        arguments:
+            $entityName: EfTech\ContactList\Entity\User
+    EfTech\ContactList\DoctrineEventSubscriber\EntityEventSubscriber:
+        tags:
+            - name: 'doctrine.event_subscriber'
+    Monolog\Handler\TelegramBotHandler:
+        arguments:
+            $apiKey: '%env(TELEGRAM_BOT_KEY)%'
+            $channel: '%env(TELEGRAM_CHANAL)%'
+            $level: 'error'

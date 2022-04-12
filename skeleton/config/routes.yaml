@@ -1,3 +1,74 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+
+recipient_id:
+  path: /recipients/{id_recipient}
+  controller: EfTech\ContactList\Controller\GetRecipientsController::__invoke
+  methods: GET
+  requirements:
+    id_recipient: '\d+'
+
+recipients:
+  path: /recipients
+  controller: EfTech\ContactList\Controller\GetRecipientsCollectionController::__invoke
+  methods: GET
+
+customer_id:
+  path: /customers/{id_recipient}
+  controller: EfTech\ContactList\Controller\GetCustomersController::__invoke
+  methods: GET
+  requirements:
+    id_recipient: '\d+'
+
+customers:
+  path: /customers
+  controller: EfTech\ContactList\Controller\GetCustomersCollectionController::__invoke
+  methods: GET
+
+colleagues_id:
+  path: /colleagues/{id_recipient}
+  controller: EfTech\ContactList\Controller\GetColleaguesController::__invoke
+  methods: GET
+  requirements:
+    id_recipient: '\d+'
+
+colleagues:
+  path: /colleagues
+  controller: EfTech\ContactList\Controller\GetColleaguesCollectionController::__invoke
+  methods: GET
+
+kinsfolk_id:
+  path: /kinsfolk/{id_recipient}
+  controller: EfTech\ContactList\Controller\GetKinsfolkController::__invoke
+  methods: GET
+  requirements:
+    id_recipient: '\d+'
+
+kinsfolk:
+  path: /kinsfolk
+  controller: EfTech\ContactList\Controller\GetKinsfolkCollectionController::__invoke
+  methods: GET
+
+address_register:
+  path: /address/register
+  controller: EfTech\ContactList\Controller\CreateAddressController::__invoke
+  methods: POST
+
+contact_list_move_to_blacklist:
+  path: /contactList/{id_recipient}/moveToBlacklist
+  controller: EfTech\ContactList\Controller\UpdateMoveToBlacklistContactListController::__invoke
+  methods: PUT
+  requirements:
+    id_recipient: '\d+'
+
+login:
+  path: /login
+  controller: EfTech\ContactList\Controller\LoginController::__invoke
+  methods: [POST, GET]
+
+address_add_administration:
+  path: /address-add/administration
+  controller: EfTech\ContactList\Controller\AddressAdministrationController::__invoke
+  methods: [POST, GET]
