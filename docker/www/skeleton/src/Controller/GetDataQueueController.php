@@ -2,7 +2,7 @@
 
 namespace EfTech\ContactList\Controller;
 
-use EfTech\ContactList\Service\ListeningToQueueService;
+use EfTech\ContactList\Service\WorkWithRabbitService;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,9 +14,26 @@ class GetDataQueueController extends AbstractController
     /**
      * Сервис для работы с реббитом
      *
-     * @var ListeningToQueueService
+     * @var WorkWithRabbitService
      */
-    private ListeningToQueueService $listeningToQueueService;
+    private WorkWithRabbitService $workWithRabbitService;
+
+    /**
+     * @return WorkWithRabbitService
+     */
+    public function getWorkWithRabbitService(): WorkWithRabbitService
+    {
+        return $this->workWithRabbitService;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger;
+    }
+
     /**
      * Логгер
      *
@@ -25,12 +42,12 @@ class GetDataQueueController extends AbstractController
     private LoggerInterface $logger;
 
     /**
-     * @param ListeningToQueueService $listeningToQueueService
+     * @param WorkWithRabbitService $workWithRabbitService
      * @param LoggerInterface $logger
      */
-    public function __construct(ListeningToQueueService $listeningToQueueService, LoggerInterface $logger)
+    public function __construct(WorkWithRabbitService $workWithRabbitService, LoggerInterface $logger)
     {
-        $this->listeningToQueueService = $listeningToQueueService;
+        $this->workWithRabbitService = $workWithRabbitService;
         $this->logger = $logger;
     }
 
@@ -41,8 +58,8 @@ class GetDataQueueController extends AbstractController
      */
     public function __invoke(Request $request): Response
     {
-        $this->logger->info('Controller listening');
-        $result = $this->listeningToQueueService->listening('queue10m');
+        $this->getLogger()->info('Controller listening');
+        $result = $this->getWorkWithRabbitService()->getOneMessage(WorkWithRabbitService::QUEUE_NAME);
         $html = "<h1>Пришло: <h1/>";
         $html .= $result;
         return new Response($html);

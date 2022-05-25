@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
  * Класс для работы с реббитом
  *
  */
-class ListeningToQueueService
+class WorkWithRabbitService
 {
 
     /**
@@ -86,11 +86,11 @@ class ListeningToQueueService
      */
     public function send(string $message, string $queue): void
     {
-        $this->logger->info('Сервис отправки сообщения в реббит');
-        $connect = $this->rabbitConnection->getConnection();
+        $this->getLogger()->info('Сервис отправки сообщения в реббит');
+        $connect = $this->getRabbitConnection()->getConnection();
         $channel = $connect->channel();
         $channel->queue_declare($queue, false, false, false, false);
-        $msg = $this->AMQPMessage->setBody($message);
+        $msg = $this->getAMQPMessage()->setBody($message);
         $channel->basic_publish($msg, '', $queue);
         $channel->close();
         $connect->close();
@@ -103,10 +103,10 @@ class ListeningToQueueService
      * @return string - сообщение из очереди
      * @throws Exception
      */
-    public function listening(string $queue): string
+    public function getOneMessage(string $queue): string
     {
-        $this->logger->info('Listening queue');
-        $connect = $this->rabbitConnection->getConnection();
+        $this->getLogger()->info('Listening queue');
+        $connect = $this->getRabbitConnection()->getConnection();
         $channel = $connect->channel();
         $channel->queue_declare($queue, false, false, false, false);
 

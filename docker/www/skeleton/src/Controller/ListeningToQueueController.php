@@ -2,7 +2,7 @@
 
 namespace EfTech\ContactList\Controller;
 
-use EfTech\ContactList\Service\ListeningToQueueService;
+use EfTech\ContactList\Service\WorkWithRabbitService;
 use Exception;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -20,20 +20,36 @@ class ListeningToQueueController extends AbstractController
     private LoggerInterface $logger;
 
     /**
+     * @return LoggerInterface
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger;
+    }
+
+    /**
      * Сервис для работы с реббитом
      *
-     * @var ListeningToQueueService
+     * @var WorkWithRabbitService
      */
-    private ListeningToQueueService $listeningToQueueService;
+    private WorkWithRabbitService $workWithRabbitService;
+
+    /**
+     * @return WorkWithRabbitService
+     */
+    public function getWorkWithRabbitService(): WorkWithRabbitService
+    {
+        return $this->workWithRabbitService;
+    }
 
     /**
      * @param LoggerInterface $logger
-     * @param ListeningToQueueService $listeningToQueueService
+     * @param WorkWithRabbitService $workWithRabbitService
      */
-    public function __construct(LoggerInterface $logger, ListeningToQueueService $listeningToQueueService)
+    public function __construct(LoggerInterface $logger, WorkWithRabbitService $workWithRabbitService)
     {
         $this->logger = $logger;
-        $this->listeningToQueueService = $listeningToQueueService;
+        $this->workWithRabbitService = $workWithRabbitService;
     }
 
     /**
@@ -43,7 +59,7 @@ class ListeningToQueueController extends AbstractController
      */
     public function __invoke(Request $request): Response
     {
-        $this->logger->info("Ветка listeningToQueueController");
+        $this->getLogger()->info("Ветка listeningToQueueController");
 
         $params = array_merge($request->query->all(), $request->attributes->all());
 
@@ -51,7 +67,7 @@ class ListeningToQueueController extends AbstractController
             throw new RuntimeException('Не передали параметр message');
         }
 
-        $this->listeningToQueueService->send($params['message'], ListeningToQueueService::QUEUE_NAME);
+        $this->getWorkWithRabbitService()->send($params['message'], WorkWithRabbitService::QUEUE_NAME);
         $html = "<h1>Отправлено: " . $params['message'] . "<h1/>";
 
         return new Response($html);

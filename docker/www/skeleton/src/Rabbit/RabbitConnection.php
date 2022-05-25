@@ -8,6 +8,7 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
  */
 class RabbitConnection
 {
+
     /**
      * @var AMQPStreamConnection|null
      */
@@ -33,13 +34,13 @@ class RabbitConnection
      */
     public function createConnection(): AMQPStreamConnection
     {
-        $config = require_once __DIR__ . '/../../config/config_rabbit/config_rabbit.php';
+        $config = Config::factory();
         return new AMQPStreamConnection(
-            $config['host'],
-            $config['port'],
-            $config['user'],
-            $config['password'],
-            $config['vhost']
+            $config->getHost(),
+            $config->getPort(),
+            $config->getUser(),
+            $config->getPassword(),
+            $config->getVhost()
         );
     }
 }
