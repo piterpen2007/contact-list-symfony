@@ -3,6 +3,9 @@ namespace EfTech\ContactList\Rabbit;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
+/**
+ * Класс подключения к rabbitmq
+ */
 class RabbitConnection
 {
     /**
@@ -11,6 +14,8 @@ class RabbitConnection
     private ?AMQPStreamConnection $connection = null;
 
     /**
+     * Возвращает объект подключения к rabbitmq
+     *
      * @return AMQPStreamConnection
      */
     public function getConnection(): AMQPStreamConnection
@@ -21,7 +26,11 @@ class RabbitConnection
         return $this->connection;
     }
 
-
+    /**
+     * Создание подключения из конфига
+     *
+     * @return AMQPStreamConnection
+     */
     public function createConnection(): AMQPStreamConnection
     {
         $config = require_once __DIR__ . '/../../config/config_rabbit/config_rabbit.php';

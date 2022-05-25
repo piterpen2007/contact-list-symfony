@@ -1,4 +1,5 @@
 <?php
+
 return [
     'host' => 'rabbit-mq',
     'port' => '5672',

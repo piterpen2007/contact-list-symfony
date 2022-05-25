@@ -56,3 +56,5 @@ services:
             $apiKey: '%env(TELEGRAM_BOT_KEY)%'
             $channel: '%env(TELEGRAM_CHANAL)%'
             $level: 'error'
+    PhpAmqpLib\Message\AMQPMessage:
+
