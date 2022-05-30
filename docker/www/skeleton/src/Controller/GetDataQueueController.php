@@ -5,6 +5,7 @@ namespace EfTech\ContactList\Controller;
 use EfTech\ContactList\Service\WorkWithRabbitService;
 use Exception;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,9 +60,19 @@ class GetDataQueueController extends AbstractController
     public function __invoke(Request $request): Response
     {
         $this->getLogger()->info('Controller listening');
-        $result = $this->getWorkWithRabbitService()->getOneMessage(WorkWithRabbitService::QUEUE_NAME);
+
+        $params = array_merge($request->query->all(), $request->attributes->all());
+
+        if (!array_key_exists('queue', $params)) {
+            throw new RuntimeException('Не передали параметр queue');
+        }
+
+        $result = $this->getWorkWithRabbitService()->getOneMessageFromAnUnknownQueue($params['queue']);
         $html = "<h1>Пришло: <h1/>";
-        $html .= $result;
+        foreach ($result as $value) {
+            $html .=' ' . $value;
+        }
+
         return new Response($html);
     }
 }

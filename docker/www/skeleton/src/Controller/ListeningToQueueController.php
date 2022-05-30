@@ -67,7 +67,7 @@ class ListeningToQueueController extends AbstractController
             throw new RuntimeException('Не передали параметр message');
         }
 
-        $this->getWorkWithRabbitService()->send($params['message'], WorkWithRabbitService::QUEUE_NAME);
+        $this->getWorkWithRabbitService()->sendingToAllQueues($params['message']);
         $html = "<h1>Отправлено: " . $params['message'] . "<h1/>";
 
         return new Response($html);

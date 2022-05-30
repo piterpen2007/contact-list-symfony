@@ -14,6 +14,11 @@ use Psr\Log\LoggerInterface;
 class WorkWithRabbitService
 {
 
+    public const FANOUT_TYPE = 'fanout';
+    /**
+     * Имя обмена
+     */
+    public const  EXCHANGE_NAME = 'logs';
     /**
      * Имя очереди
      */
@@ -120,4 +125,91 @@ class WorkWithRabbitService
         return $msg;
     }
 
+    /**
+     * Отправляет сообщение во все очереди
+     *
+     * @param string $message
+     * @return void
+     * @throws Exception
+     */
+    public function sendingToAllQueues(string $message): void
+    {
+        $this->getLogger()->info('Отправка сообщения всем очередям');
+        $connect = $this->getRabbitConnection()->getConnection();
+        $channel = $connect->channel();
+
+        $channel->exchange_declare(
+            WorkWithRabbitService::EXCHANGE_NAME,
+            WorkWithRabbitService::FANOUT_TYPE,
+            false,
+            false,
+            false
+        );
+
+        $msg = $this->getAMQPMessage()->setBody($message);
+
+        $channel->basic_publish($msg, WorkWithRabbitService::EXCHANGE_NAME);
+
+        $channel->close();
+        $connect->close();
+    }
+
+    /**
+     * Слушает конкретно свою очередь, которая автоматически создаётся
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function getOneMessageFromAnUnknownQueue(string $queue): array
+    {
+        $this->getLogger()->info('Слушает свою очередь неизвестную');
+        $connect = $this->getRabbitConnection()->getConnection();
+        $channel = $connect->channel();
+
+        $channel->exchange_declare(
+            WorkWithRabbitService::EXCHANGE_NAME,
+            WorkWithRabbitService::FANOUT_TYPE,
+            false,
+            false,
+            false
+        );
+
+        $channel->queue_declare(
+            $queue,
+            false,
+            false,
+            true,
+            false
+        );
+
+        $messages = [];
+        $callback = function($msg) use (&$messages) {
+            //echo " [x] Received ", $msg->body, "\n";
+            $messages[] = $msg->body;
+        };
+
+        $channel->queue_bind($queue, WorkWithRabbitService::EXCHANGE_NAME);
+
+        $channel->basic_consume($queue, '', false, true, false, false, $callback);
+
+        $timeout = 10;
+        while (count($channel->callbacks)) {
+            try{
+                $channel->wait(null, false , $timeout);
+            }catch(\PhpAmqpLib\Exception\AMQPTimeoutException $e){
+                $channel->close();
+                $connect->close();
+                return $messages;
+            }
+        }
+
+//        $result = $channel->basic_get($queue, true);
+//        $msg = '';
+//        if (!is_null($result)) {
+//            $msg = $result->getBody();
+//        }
+        $channel->close();
+        $connect->close();
+        return $messages;
+    }
 }
