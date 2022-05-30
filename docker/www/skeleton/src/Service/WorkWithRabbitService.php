@@ -155,9 +155,10 @@ class WorkWithRabbitService
     }
 
     /**
-     * Слушает конкретно свою очередь, которая автоматически создаётся
+     * Слушает конкретно свою очередь
      *
-     * @return string
+     * @param string $queue - очередь для прослушки
+     * @return array
      * @throws Exception
      */
     public function getOneMessageFromAnUnknownQueue(string $queue): array
@@ -184,7 +185,6 @@ class WorkWithRabbitService
 
         $messages = [];
         $callback = function($msg) use (&$messages) {
-            //echo " [x] Received ", $msg->body, "\n";
             $messages[] = $msg->body;
         };
 
@@ -202,7 +202,6 @@ class WorkWithRabbitService
                 return $messages;
             }
         }
-
 //        $result = $channel->basic_get($queue, true);
 //        $msg = '';
 //        if (!is_null($result)) {
